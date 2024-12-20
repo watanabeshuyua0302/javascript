@@ -6,47 +6,56 @@
     <title>Spotify Popular Tracks</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #121212;
+            color: #e5e5e5;
         }
         header {
             background-color: #1db954;
             color: white;
-            padding: 10px 20px;
+            padding: 20px;
             text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         #searchContainer {
             margin: 20px auto;
             text-align: center;
         }
         #searchInput {
-            width: 300px;
-            padding: 10px;
-            border: 1px solid #ccc;
+            width: 350px;
+            padding: 12px;
+            border: 2px solid #1db954;
             border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background-color: #333;
+            color: white;
         }
         #searchButton {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: #1db954;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
         #searchButton:hover {
             background-color: #159940;
         }
         #fetchData {
-            padding: 10px 20px;
-            margin: 10px;
+            padding: 12px 24px;
+            margin: 20px;
             background-color: #1db954;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
         #fetchData:hover {
             background-color: #159940;
@@ -58,43 +67,57 @@
             padding: 20px;
         }
         .category {
-            margin: 20px 0;
+            margin: 40px 0;
         }
         .category h2 {
             text-align: left;
             color: #1db954;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
         .track-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 30px;
         }
         .track {
-            background-color: white;
-            border: 1px solid #ddd;
+            background-color: #333;
+            border: 2px solid #444;
             border-radius: 10px;
-            padding: 10px;
-            width: 200px;
+            padding: 15px;
+            width: 220px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .track:hover {
-            transform: scale(1.05);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-        img {
-            border-radius: 10px;
+        .track img {
+            border-radius: 8px;
             cursor: pointer;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
         }
         p {
-            margin: 10px 0;
+            margin: 12px 0;
+            font-size: 16px;
+        }
+        .track p {
+            color: #e5e5e5;
+        }
+        .track p strong {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Spotify Popular Tracks</h1>
+        Spotify Popular Tracks
     </header>
     <div id="searchContainer">
         <input type="text" id="searchInput" placeholder="Search for singles or albums...">
@@ -103,11 +126,11 @@
     <button id="fetchData">Fetch Popular Tracks</button>
     <div id="tracks">
         <div class="category" id="singles">
-            <h2>Singles</h2>
+            <h2>Popular Singles</h2>
             <div class="track-list"></div>
         </div>
         <div class="category" id="albums">
-            <h2>Albums</h2>
+            <h2>Popular Albums</h2>
             <div class="track-list"></div>
         </div>
     </div>
@@ -193,6 +216,23 @@
             };
         }
 
+        // Display tracks
+        function displayTracks(tracks) {
+            const singlesContainer = document.querySelector("#singles .track-list");
+            singlesContainer.innerHTML = "";
+
+            tracks.forEach(track => {
+                const trackElement = document.createElement("div");
+                trackElement.className = "track";
+                trackElement.innerHTML = `
+                    <img src="${track.track.album.images[0].url}" alt="${track.track.name}" width="180" onclick="playPreview('${track.track.preview_url}')">
+                    <p><strong>${track.track.name}</strong></p>
+                    <p>${track.track.artists.map(artist => artist.name).join(", ")}</p>
+                `;
+                singlesContainer.appendChild(trackElement);
+            });
+        }
+
         // Display search results
         function displaySearchResults({ singles, albums }) {
             const singlesContainer = document.querySelector("#singles .track-list");
@@ -205,7 +245,7 @@
                 const trackElement = document.createElement("div");
                 trackElement.className = "track";
                 trackElement.innerHTML = `
-                    <img src="${single.album.images[0].url}" alt="${single.name}" width="150" onclick="playPreview('${single.preview_url}')">
+                    <img src="${single.album.images[0].url}" alt="${single.name}" width="180" onclick="playPreview('${single.preview_url}')">
                     <p><strong>${single.name}</strong></p>
                     <p>${single.artists.map(artist => artist.name).join(", ")}</p>
                 `;
@@ -216,7 +256,7 @@
                 const albumElement = document.createElement("div");
                 albumElement.className = "track";
                 albumElement.innerHTML = `
-                    <img src="${album.images[0].url}" alt="${album.name}" width="150">
+                    <img src="${album.images[0].url}" alt="${album.name}" width="180">
                     <p><strong>${album.name}</strong></p>
                     <p>${album.artists.map(artist => artist.name).join(", ")}</p>
                     <p>Release Date: ${album.release_date}</p>
